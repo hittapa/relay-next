@@ -1,0 +1,9 @@
+version: "3"
+services:
+  traefik:
+    image: traefik:v2.4
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+  ci:
+    build: ./ci

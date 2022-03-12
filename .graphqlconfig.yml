@@ -1,0 +1,16 @@
+projects:
+  chromeextension:
+    schemaPath: graphql/schema.json
+    includes:
+      - ./graphql/**/*.js
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: javascript
+        generatedFileName: ''
+        docsFilePath: ./graphql
+        maxDepth: 5
+extensions:
+  amplify:
+    version: 3

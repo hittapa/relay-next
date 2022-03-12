@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-chromeextension-dev-111021-authRole",
+      "UnauthRoleArn": "arn:aws:iam::137304923669:role/amplify-chromeextension-dev-111021-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::137304923669:role/amplify-chromeextension-dev-111021-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-chromeextension-dev-111021-deployment",
+      "UnauthRoleName": "amplify-chromeextension-dev-111021-unauthRole",
+      "StackName": "amplify-chromeextension-dev-111021",
+      "StackId": "arn:aws:cloudformation:us-east-2:137304923669:stack/amplify-chromeextension-dev-111021/8d3ce230-93c5-11eb-98b7-0699d46f8e66",
+      "AmplifyAppId": "do2k74ujwqsbv"
+    },
+    "categories": {
+      "auth": {
+        "chromeextension3c21c221": {}
+      }
+    }
+  }
+}

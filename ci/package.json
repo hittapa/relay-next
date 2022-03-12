@@ -1,0 +1,12 @@
+{
+  "name": "ci",
+  "version": "1.0.0",
+  "description": "CI Endpoints",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1"
+  }
+}

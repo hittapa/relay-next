@@ -1,0 +1,43 @@
+version: "3"
+services:
+  traefik:
+    command:
+      #- --log.level=DEBUG
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+    ports:
+      - 8080:8080
+      - 80:80
+  graphql:
+    image: smooms-graphql
+    build:
+      context: ./graphql
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.graphql.loadbalancer.server.port=5433
+      - traefik.http.routers.graphql.rule=Host(`localhost`)
+      - traefik.http.routers.graphql.entrypoints=graphql
+  db:
+    image: smooms-db
+    build:
+      context: ./db
+    volumes:
+      - db:/var/lib/postgresql/v12/data
+    env_file:
+      - ./.env
+    ports:
+      - 5432:5432
+  nextjs:
+    build: .
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextjs.rule=Host(`localhost`)
+      - traefik.http.routers.nextjs.entrypoints=web
+      - traefik.http.services.nextjs.loadbalancer.responseforwarding.flushinterval=-1
+      - traefik.http.services.nextjs.loadbalancer.server.port=3000
+volumes:
+  db:

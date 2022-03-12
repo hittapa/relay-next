@@ -1,0 +1,1 @@
+CREATE USER relay with encrypted password 'localdemo';

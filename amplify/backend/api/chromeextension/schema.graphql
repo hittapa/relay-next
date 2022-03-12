@@ -1,0 +1,47 @@
+type Category @model 
+  @auth(rules: [{ allow: public, operations: [read] }]) {
+    id: ID!
+    name: String!
+    tags: [Tag] @connection(keyName: "tagCategory", fields: ["id"])
+}
+
+type Tag @model 
+  @key(name: "tagCategory", fields: ["categoryID"]) 
+  @auth(rules: [
+    { allow: owner, ownerField: "username" },
+    { allow: public, operations: [read] }
+  ]) {
+    id: ID!
+    categoryID: ID!
+    label: String!
+    username: String
+    category: Category @connection(fields: ["categoryID"])
+    messageTags: [MessageTag] @connection(keyName: "fromTag", fields: ["id"])
+}
+
+type MessageTag
+  @model(queries: null)
+  @key(name: "fromTag", fields: ["tagID", "messageID"])
+  @key(name: "fromMessage", fields: ["messageID", "tagID"]) 
+  @auth(rules: [
+    { allow: owner },
+    { allow: public, operations: [read] }
+  ]){
+    id: ID!
+    tagID: ID!
+    messageID: ID!
+    tag: Tag! @connection(fields: ["tagID"])
+    message: Message! @connection(fields: ["messageID"])
+}
+
+type Message @model 
+  @key(name: "mssgsByUsername", fields: ["username"], queryField: "mssgsByUsername")
+  @auth(rules: [
+    { allow: owner, ownerField: "username" },
+    { allow: public, operations: [read] }
+  ]) {
+    id: ID!
+    body: String!
+    username: String
+    messageTags: [MessageTag] @connection(keyName: "fromMessage", fields: ["id"])
+}

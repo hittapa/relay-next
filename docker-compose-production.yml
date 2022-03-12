@@ -1,0 +1,84 @@
+version: "3"
+services:
+  traefik:
+    command:
+      #- --log.level=DEBUG
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.graphile.address=:5433
+      - --certificatesresolvers.le.acme.email=urgent.programmer@gmail.com
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      # for blue green deploys
+      - --providers.file.filename=dynamic_conf.toml
+    ports:
+      - 443:443
+      - 8080:8080
+      - 80:80
+      - 5433:5433
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: traefik
+  graphql_blue:
+    image: smooms-graphql
+    build:
+      context: ./graphql
+    env_file:
+      - ./.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.graphql_blue.loadbalancer.server.port=5433
+      - traefik.http.routers.graphql_blue.rule=Host(`app.align.company`)
+      - traefik.http.routers.graphql_blue.tls.certresolver=le
+      - traefik.http.routers.graphql_blue.entrypoints=graphile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: graphql_blue
+  graphql_green:
+    image: smooms-graphql
+    build:
+      context: ./graphql
+    env_file:
+      - ./.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.graphql_green.loadbalancer.server.port=5433
+      - traefik.http.routers.graphql_green.rule=Host(`app.align.company`)
+      - traefik.http.routers.graphql_green.tls.certresolver=le
+      - traefik.http.routers.graphql_green.entrypoints=graphile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: graphql_green
+  nextjs_blue:
+    build: .
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.nextjs_blue.loadbalancer.server.port=3000
+      - traefik.http.routers.nextjs_blue.rule=Host(`app.align.company`, `blue.align.company`)
+      - traefik.http.routers.nextjs_blue.tls.certresolver=le
+      - traefik.http.routers.nextjs_blue.entrypoints=websecure
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: nextjs_blue
+  nextjs_green:
+    build: .
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.nextjs_green.loadbalancer.server.port=3000
+      - traefik.http.routers.nextjs_green.rule=Host(`app.align.company`)
+      - traefik.http.routers.nextjs_green.tls.certresolver=le
+      - traefik.http.routers.nextjs_green.entrypoints=websecure
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: nextjs_green

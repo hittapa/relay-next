@@ -1,0 +1,9 @@
+## Dynamic configuration
+[http.services]
+  [http.services.app]
+    [[http.services.app.weighted.services]]
+      name = "green_nextjs@docker"
+      weight = 4
+    [[http.services.app.weighted.services]]
+      name = "blue_nextjs@docker"
+      weight = 1
